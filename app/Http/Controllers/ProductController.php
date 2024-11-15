@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -28,36 +29,36 @@ class ProductController extends Controller
         }
     }
 
-    public function store(ProductRequest $request): JsonResponse
+    public function store(ProductRequest $request): ProductResource|JsonResponse
     {
         try {
             $data = $request->validated();
             $data['user_id'] = auth()->id();
-            return response()->json($this->repository->createProduct($data), 201);
+            return ProductResource::make($this->repository->createProduct($data));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    public function show(string $id): JsonResponse
+    public function show(string $id): ProductResource|JsonResponse
     {
         try {
             $product = $this->repository->getProduct($id);
             if (!$product) {
                 return response()->json(['error' => 'Product not found'], 404);
             }
-            return response()->json($product);
+            return ProductResource::make($product);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    public function update(ProductRequest $request, string $id): JsonResponse
+    public function update(ProductRequest $request, string $id): ProductResource|JsonResponse
     {
         try {
             $data = $request->validated();
-            $this->repository->updateProduct($id, $data);
-            return response()->json(null, 204);
+            $product = $this->repository->updateProduct($id, $data);
+            return ProductResource::make($product);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

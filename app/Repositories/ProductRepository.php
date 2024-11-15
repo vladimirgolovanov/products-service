@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\Status;
 use App\Repositories\Contracts\ProductRepositoryInterface;
@@ -44,24 +45,14 @@ class ProductRepository implements ProductRepositoryInterface
             ->get();
     }
 
-    public function getProduct(string $id): ?array
+    public function getProduct(string $id): ?Product
     {
         $product = $this->product->find($id);
         if (!$product) {
             return null;
         }
 
-        return [
-            'id' => $product->id,
-            'name' => $product->name,
-            'description' => $product->description,
-            'category' => $product->category->name ?? null,
-            'status' => $product->status->name ?? null,
-            'country' => $product->country->name ?? null,
-            'user' => $product->user->name ?? null,
-            'created_at' => $product->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
-        ];
+        return $product;
     }
 
     public function createProduct(array $data): Product
@@ -69,9 +60,12 @@ class ProductRepository implements ProductRepositoryInterface
         return $this->product->create($data);
     }
 
-    public function updateProduct(string $id, array $data): void
+    public function updateProduct(string $id, array $data): Product
     {
-        $this->product->find($id)->update($data);
+        $product = $this->product->find($id);
+        $product->update($data);
+
+        return $product;
     }
 
     public function deleteProduct(string $id): void

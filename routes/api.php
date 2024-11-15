@@ -36,5 +36,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('products/dropdown', [ProductController::class, 'dropdown']);
-    Route::resource('products', ProductController::class);
+    Route::resource('products', ProductController::class)
+        ->only(['index', 'store', 'show', 'update', 'destroy']);
 });
