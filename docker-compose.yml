@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
     postgres:
         image: postgres:17
@@ -19,16 +21,10 @@ services:
             - app-network
     php-fpm:
         build:
-            context: .
             dockerfile: docker/php-fpm/Dockerfile
         working_dir: /application
-        volumes:
-            - .:/application
-        ports:
-            - "9006:9000"
         networks:
             - app-network
-        command: sh -c "composer install && php artisan migrate && php-fpm"
     nginx:
         image: nginx:alpine
         volumes:
@@ -38,6 +34,8 @@ services:
             - "6880:80"
         networks:
             - app-network
+        depends_on:
+            - php-fpm
 networks:
     app-network:
         driver: bridge

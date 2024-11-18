@@ -7,10 +7,16 @@ RUN docker-php-ext-install zip pdo pdo_pgsql
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-#WORKDIR /application
+WORKDIR /application
 
-#COPY . .
+ADD . /application
 
-#RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-#RUN php artisan key:generate
-#RUN php artisan migrate
+RUN chown -R www-data:www-data /application && \
+    chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R ug+rwx storage bootstrap/cache
+
+USER www-data
+
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+CMD ["php-fpm"]
