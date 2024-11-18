@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
     postgres:
+        container_name: product-service-postgres
         image: postgres:17
         environment:
             POSTGRES_USER: root
@@ -12,6 +13,7 @@ services:
         networks:
             - app-network
     postgres_testing:
+        container_name: product-service-postgres-testing
         image: postgres:17
         environment:
             POSTGRES_USER: root
@@ -20,12 +22,14 @@ services:
         networks:
             - app-network
     php-fpm:
+        container_name: product-service-php-fpm
         build:
             dockerfile: docker/php-fpm/Dockerfile
         working_dir: /application
         networks:
             - app-network
     nginx:
+        container_name: product-service-nginx
         image: nginx:alpine
         volumes:
             - '.:/application'

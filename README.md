@@ -4,6 +4,7 @@
 
 ```bash
 docker compose up -d
+docker exec -it product-service-php-fpm php artisan migrate
 ```
 
 ## Configuration
